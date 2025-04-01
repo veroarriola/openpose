@@ -279,8 +279,14 @@ endfunction()
 ###  Non macro section
 ################################################################################################
 
-find_package(CUDA 5.5 QUIET)
-find_cuda_helper_libs(curand)  # cmake 2.8.7 compartibility which doesn't search for curand
+
+if (${CMAKE_VERSION} VERSION_GREATER 3.9.0)
+  INCLUDE(CheckLanguage)
+  CHECK_LANGUAGE(CUDA)
+else ()
+  find_package(CUDA 5.5 QUIET)
+  find_cuda_helper_libs(curand)  # cmake 2.8.7 compartibility which doesn't search for curand
+endif ()
 
 if (NOT CUDA_FOUND)
   return()

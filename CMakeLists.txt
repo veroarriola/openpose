@@ -1,3 +1,7 @@
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+#cmake_minimum_required(VERSION 3.0 FATAL_ERROR) # required by cmake eigen finder to find locally installed versions (e.g., CUDA 9.2 support was added in eigen 3.3.5)
+# cmake_minimum_required(VERSION 2.8.7 FATAL_ERROR) # min. cmake version recommended by Caffe
+
 ### VERSION INFO
 set(OpenPose_VERSION_MAJOR 1)
 set(OpenPose_VERSION_MINOR 7)
@@ -31,8 +35,7 @@ elseif (${CMAKE_VERSION} VERSION_GREATER 3.0.0)
 else (${CMAKE_VERSION} VERSION_GREATER 3.9.0)
   project(OpenPose)
 endif (${CMAKE_VERSION} VERSION_GREATER 3.9.0)
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR) # required by cmake eigen finder to find locally installed versions (e.g., CUDA 9.2 support was added in eigen 3.3.5)
-# cmake_minimum_required(VERSION 2.8.7 FATAL_ERROR) # min. cmake version recommended by Caffe
+
 
 
 ### Extra functionality
@@ -211,7 +214,12 @@ set_property(CACHE GPU_MODE PROPERTY STRINGS CUDA OPENCL CPU_ONLY)
 # Look for CUDA
 set(CUDA_FOUND FALSE)
 if (${GPU_MODE} MATCHES "CUDA")
-  find_package(CUDA)
+  if (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+    INCLUDE(CheckLanguage)
+    CHECK_LANGUAGE(CUDA)
+  else (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+    find_package(CUDA)
+  endif (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
 endif (${GPU_MODE} MATCHES "CUDA")
 # Look for OpenCL
 set(OpenCL_FOUND FALSE)
@@ -350,7 +358,12 @@ mark_as_advanced(DOWNLOAD_SERVER)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
 
 if (${GPU_MODE} MATCHES "CUDA")
-  find_package(CUDA)
+  if (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+    INCLUDE(CheckLanguage)
+    CHECK_LANGUAGE(CUDA)
+  else (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+    find_package(CUDA)
+  endif (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
 endif (${GPU_MODE} MATCHES "CUDA")
 
 # Adding 3D
@@ -421,7 +434,14 @@ endif (${WITH_EIGEN} MATCHES "NONE")
 
 if (UNIX OR APPLE)
   if (${GPU_MODE} MATCHES "CUDA")
-    include(cmake/Cuda.cmake)
+    if (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+      find_package(CUDAToolkit COMPONENTS cudart)
+      if (${CUDAToolkit_VERSION} VERSION_LESS_EQUAL 12)
+        add_definitions(-std=c++12)
+      endif ()
+    else (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+      include(cmake/Cuda.cmake)
+    endif (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
     find_package(CuDNN)
   endif (${GPU_MODE} MATCHES "CUDA")
   find_package(GFlags) # For Caffe and OpenPose
@@ -442,12 +462,13 @@ if (UNIX OR APPLE)
 
   # 3D
   if (WITH_3D_RENDERER)
+    set(OpenGL_GL_PREFERENCE "GLVND")
     # OpenGL
     find_package(OpenGL REQUIRED)
     # GLUT
     find_package(GLUT REQUIRED)
-    # OpenGL
-    find_package(OpenGL REQUIRED)
+    ## OpenGL
+    #find_package(OpenGL REQUIRED)
   endif (WITH_3D_RENDERER)
   if (WITH_CERES)
     # Eigen + Ceres
@@ -508,11 +529,19 @@ if (UNIX OR APPLE)
     set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++14") # Thrust library requires C++14 for CUDA >= 11
     set(CUDA_NVCC_FLAGS_DEBUG "${CUDA_NVCC_FLAGS_DEBUG} -D_DEBUG -g")
 
-    if (NOT CUDA_FOUND)
-      message(STATUS "CUDA not found.")
-      execute_process(COMMAND cat install_cuda.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/scripts/ubuntu)
-      message(FATAL_ERROR "Install CUDA using the above commands.")
-    endif (NOT CUDA_FOUND)
+    if (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+      if (NOT CMAKE_CUDA_COMPILER)
+        message(STATUS "CUDA not found.")
+        execute_process(COMMAND cat install_cuda.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/scripts/ubuntu)
+        message(FATAL_ERROR "Install CUDA using the above commands.")
+      endif (NOT CMAKE_CUDA_COMPILER)
+    else ()
+      if (NOT CUDA_FOUND)
+        message(STATUS "CUDA not found.")
+        execute_process(COMMAND cat install_cuda.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/scripts/ubuntu)
+        message(FATAL_ERROR "Install CUDA using the above commands.")
+      endif (NOT CUDA_FOUND)
+    endif ()
 
     if (USE_CUDNN AND NOT CUDNN_FOUND)
       message(STATUS "cuDNN not found.")

@@ -5,7 +5,12 @@ find_path(CUDNN_INCLUDE cudnn.h
     PATHS ${CUDNN_ROOT} $ENV{CUDNN_ROOT} ${CUDA_TOOLKIT_INCLUDE}
     DOC "Path to cuDNN include directory." )
 
-get_filename_component(__libpath_hist ${CUDA_CUDART_LIBRARY} PATH)
+if (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+  get_filename_component(__libpath_hist ${CUDAToolkit_LIBRARY_DIR} PATH)
+else (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+  get_filename_component(__libpath_hist ${CUDA_CUDART_LIBRARY} PATH)
+endif (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+
 find_library(CUDNN_LIBRARY NAMES ${CUDNN_LIB_NAME}
     PATHS ${CUDNN_ROOT} $ENV{CUDNN_ROOT} ${CUDNN_INCLUDE} ${__libpath_hist} ${__libpath_hist}/../lib
     DOC "Path to cuDNN library.")
