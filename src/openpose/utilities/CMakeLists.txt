@@ -15,7 +15,11 @@ set(SOURCES_OPENPOSE ${SOURCES_OPENPOSE} ${SOURCES_OP_UTILITIES_WITH_CP} PARENT_
 
 if (UNIX OR APPLE)
   if (${GPU_MODE} MATCHES "CUDA")
-    cuda_add_library(openpose_utilities ${SOURCES_OP_UTILITIES})
+    if (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+      add_library(openpose_utilities ${SOURCES_OP_UTILITIES})
+    else ()
+      cuda_add_library(openpose_utilities ${SOURCES_OP_UTILITIES})
+    endif ()
   else ()
     add_library(openpose_utilities ${SOURCES_OP_UTILITIES})
   endif ()

@@ -10,7 +10,11 @@ set(SOURCES_OPENPOSE ${SOURCES_OPENPOSE} ${SOURCES_OP_CALIBRATION_WITH_CP} PAREN
 
 if (UNIX OR APPLE)
   if (${GPU_MODE} MATCHES "CUDA")
-    cuda_add_library(openpose_calibration ${SOURCES_OP_CALIBRATION})
+    if (${CMAKE_VERSION} VERSION_GREATER 3.17.0)
+      add_library(openpose_calibration ${SOURCES_OP_CALIBRATION})
+    else ()
+      cuda_add_library(openpose_calibration ${SOURCES_OP_CALIBRATION})
+    endif ()
   else ()
     add_library(openpose_calibration ${SOURCES_OP_CALIBRATION})
   endif ()
