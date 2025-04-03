@@ -4,9 +4,9 @@
 
 -----------------
 
-| **Build Type**   |`Linux`           |`MacOS`           |`Windows`         |
-| :---:            | :---:            | :---:            | :---:            |
-| **Build Status** | [![Status](https://github.com/CMU-Perceptual-Computing-Lab/openpose/workflows/CI/badge.svg)](https://github.com/CMU-Perceptual-Computing-Lab/openpose/actions) | [![Status](https://github.com/CMU-Perceptual-Computing-Lab/openpose/workflows/CI/badge.svg)](https://github.com/CMU-Perceptual-Computing-Lab/openpose/actions) | [![Status](https://ci.appveyor.com/api/projects/status/5leescxxdwen77kg/branch/master?svg=true)](https://ci.appveyor.com/project/gineshidalgo99/openpose/branch/master) |
+| **Build Type**   |`Linux`           |
+| :---:            | :---:            |
+| **Build Status** | [![Status](https://github.com/CMU-Perceptual-Computing-Lab/openpose/workflows/CI/badge.svg)](https://github.com/CMU-Perceptual-Computing-Lab/openpose/actions) |
 
 [**OpenPose**](https://github.com/CMU-Perceptual-Computing-Lab/openpose) has represented the **first real-time multi-person system to jointly detect human body, hand, facial, and foot keypoints (in total 135 keypoints) on single images**.
 
