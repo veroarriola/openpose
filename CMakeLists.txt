@@ -979,10 +979,10 @@ endif (WIN32)
 # 3-D
 if (WITH_3D_ADAM_MODEL)
   set(OpenPose_3rdparty_libraries ${OpenPose_3rdparty_libraries}
-      ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARY} ${FREE_IMAGE_LIBRARY})
+      ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLUT_LIBRARIES} ${GLEW_LIBRARY} ${FREE_IMAGE_LIBRARY})
 endif (WITH_3D_ADAM_MODEL)
 if (WITH_3D_RENDERER)
-  set(OpenPose_3rdparty_libraries ${OpenPose_3rdparty_libraries} ${GLUT_LIBRARY} ${OPENGL_LIBRARIES})
+  set(OpenPose_3rdparty_libraries ${OpenPose_3rdparty_libraries} ${GLUT_LIBRARY} ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES})
 endif (WITH_3D_RENDERER)
 if (WITH_CERES)
   set(OpenPose_3rdparty_libraries ${OpenPose_3rdparty_libraries} ${CERES_LIBRARIES})

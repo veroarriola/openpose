@@ -1,5 +1,5 @@
 add_subdirectory(calibration)
-add_subdirectory(deprecated)
+#add_subdirectory(deprecated)
 add_subdirectory(openpose)
 add_subdirectory(tutorial_api_cpp)
 add_subdirectory(tutorial_api_python)
